@@ -3,7 +3,7 @@ import * as http from 'node:http';
 import * as path from 'node:path';
 
 const PORT = 8000;
-const DELAY = 10000;
+const DELAY = 20000;
 const MIME_TYPES = {
   default: 'application/octet-stream',
   html: 'text/html; charset=UTF-8',
@@ -33,17 +33,26 @@ const prepareFile = async (url) => {
   return { found, ext, stream };
 };
 
+// function delay(time){
+//   console.log('time', time);
+//   return new Promise((res) => setTimeout(res), time);
+// } 
+let counter = 0;
 http
   .createServer(async (req, res) => {
-    if (req.url === '/api' && req.method === 'GET') {
+    console.log('req.url', req.url);
+    console.log('req.method', req.method);
+    if (req.url === '/api2' && req.method === 'GET') {
+
       setTimeout(() => {
         //response headers
         res.writeHead(200, { 'Content-Type': 'application/json' });
         //set the response
-        res.write({ message: 'success' });
-        //end the response
-        res.end();
-      }, DELAY);
+        res.write('sucess');
+          //end the response
+          res.end();
+        }, counter > 1 ? 0 : DELAY);  
+        counter+= 1;
     } else {
       const file = await prepareFile(req.url);
       const statusCode = file.found ? 200 : 404;

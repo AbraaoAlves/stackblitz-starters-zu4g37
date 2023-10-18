@@ -10,15 +10,32 @@
   <body>
     <h1>Ola mundo</h1>
     <script>
-      (async function () {
+      function delay(time){
+        return new Promise((res) => setTimeout(res), time);
+      } 
+      
+      async function getdata(){
         try {
-          const resp = await axios.get('/api', {
-            timeout: 5000,
+          const resp = await axios.get('/api2', {
+            timeout: 2500,
           });
-          console.log('resp', resp);
+          return resp;
         } catch (err) {
-          debugger;
-          console.log('error', err);
+          // handle timeout 
+          if (err.code && err.message.includes('timeout')) {
+            await delay(Math.random() * (5000 - 1000) + 1000);
+            return getdata();
+          }
+        }
+      }
+
+      (async function () {
+        try{
+          const data = await getdata();
+          console.log('data', data); 
+
+        } catch(err){
+            console.log('err', err);
         }
       })();
     </script>
